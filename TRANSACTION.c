@@ -121,9 +121,11 @@ int checkDelet(int n) {
 
 	int j = 0;
 
-	for(j = 0; j < temp; j++)
+	for(j = 0; j < temp; j++){
+		// printf("%d %d\n",j, mails[j].name);
 		if (mails[j].name == n)
 			break;
+	}
 
 	return j;
 }
@@ -158,6 +160,8 @@ void initialize() {
     	}
 	}
 
+	// for (int i = 0; i < temp; i++)
+	// 	printf("%d %d\n", mails[i].name, mails[i].deleted);
 	mails[i].deleted = 1;
 
 	flg = 1;
@@ -177,10 +181,16 @@ void STAT(char * res) {
 	sprintf(fc, "%d", results[0]);
 	sprintf(tot, "%d", results[1]);
 
-	strcat(res, fc);
-	strcat(res, " ");
-	strcat(res, tot);
-	strcat(res, "\n");
+	if (results[0] > 0) {
+		strcat(res, fc);
+		strcat(res, " ");
+		strcat(res, tot);
+		strcat(res, "\n");
+	}
+	else {
+		strcat(res, "\n");
+	}
+
 }
 
 void LIST(int n, char *res) {
@@ -207,51 +217,57 @@ void LIST(int n, char *res) {
 		sprintf(fc, "%d", results[0]);
 		sprintf(tot, "%d", results[1]);
 
-		strcat(res, fc);
-		strcat(res, " (");
-		strcat(res, tot);
-		strcat(res, " octets)\n");
+		if (results[0] > 0) {
+
+			strcat(res, fc);
+			strcat(res, " (");
+			strcat(res, tot);
+			strcat(res, " octets)\n");
 		
-		dirp = opendir (path);
-		if (dirp == NULL) {
-            printf ("Cannot open directory '%s'\n", path);
-            exit(EXIT_FAILURE);
-        }
-
-        struct dirent **entry;
-        int n;
-        int i = 0;
-
-        n = scandir(path, &entry, NULL, alphasort);
-        if (n < 0)
-        	perror("scandir");
-        else {
-
-        	while (i<n) {
-
-        		char filepath[50];
-        		strcpy(filepath, path);
-    
-    	   		if(entry[i]->d_type == DT_REG && mails[checkDelet(atoi(entry[i]->d_name))].deleted == 0	){
-        			strcat(filepath, "/");
-        			strcat(filepath, entry[i]->d_name);
-        		
-    				long fp_size = findfileSize(filepath);
-    				//printf("%d\n", fp_size);
-    				sprintf(fc, "%ld", fp_size);
-
-        			strcat(res, "S: ");
-        			strcat(res, entry[i] -> d_name);
-        			strcat(res, " ");
-        			strcat(res, fc);
-        			strcat(res, "\n");
-        		}
-        	++i;
-           
+			dirp = opendir (path);
+			if (dirp == NULL) {
+            	printf ("Cannot open directory '%s'\n", path);
+            	exit(EXIT_FAILURE);
         	}
-   		}
+
+        	struct dirent **entry;
+        	int n;
+        	int i = 0;
+
+       		n = scandir(path, &entry, NULL, alphasort);
+        	if (n < 0)
+        		perror("scandir");
+        	else {
+
+        		while (i<n) {
+
+        			char filepath[50];
+        			strcpy(filepath, path);
+    
+    	   			if(entry[i]->d_type == DT_REG && mails[checkDelet(atoi(entry[i]->d_name))].deleted == 0	){
+        				strcat(filepath, "/");
+        				strcat(filepath, entry[i]->d_name);
+        		
+    					long fp_size = findfileSize(filepath);
+    					//printf("%d\n", fp_size);
+    					sprintf(fc, "%ld", fp_size);
+
+        				strcat(res, "S: ");
+        				strcat(res, entry[i] -> d_name);
+        				strcat(res, " ");
+        				strcat(res, fc);
+        				strcat(res, "\n");
+        			}
+        		++i;
+           
+        		}
+   			}
 
 		closedir(dirp);
+		}
+		else {
+			strcat(res, "\n");
+		}
 
 	}
 
@@ -279,10 +295,13 @@ void LIST(int n, char *res) {
 
 			long fp_size = findfileSize(path);
     			//printf("%d\n", fp_size);
+
     		sprintf(fc, "%ld", fp_size);
 
     		strcat(res, fc);
     		strcat(res, "\n");
+
+    		fclose(fp);
 
 		}
 
@@ -297,6 +316,7 @@ void RETR (char *n, char *res) {
 	char line[MAXCHAR];
 	char c[10];
 
+	//printf("%d %d\n",checkDelet(atoi(n)), mails[checkDelet(atoi(n))].deleted);
 	fp = fopen(path, "r");
 
 	if (!fp || mails[checkDelet(atoi(n))].deleted != 0) {
@@ -355,7 +375,7 @@ void RSET (char * res) {
 	char tot[10];
 	int results[2];
 	
-	strcpy(res, "S: +OK maildrop has " );
+	strcpy(res, "S: +OK maildrop has " ); //node
 	
 	count_size(results);
 
@@ -377,7 +397,7 @@ int main(int argc, char *argv[]) {
 
 	char line[15];
 	char *res;
-	res = (char *)malloc (2096 * sizeof(char));
+	res = (char *)malloc (65536 * sizeof(char));
 	strcpy(res, "S: +OK ");
 
 	flg = 0;
@@ -387,7 +407,7 @@ int main(int argc, char *argv[]) {
 
 		strcpy(path,"as4-supplementary/");
 		strcat(path, username);
-		strcpy(res, "S: +OK ");
+		strcpy(res, "");
 		read_line(line);
 		
 		char * newString;
@@ -424,7 +444,8 @@ int main(int argc, char *argv[]) {
 			else if (strcmp(newString, "DELE") == 0){
 
 				newString= strtok(NULL, " \n");
-				DELE(atoi(newString), res);
+				if (newString != NULL)
+					DELE(atoi(newString), res);
 
 			}
 
