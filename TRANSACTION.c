@@ -12,19 +12,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define BUFSIZE 1024
-#define MAXCHAR 500
-
-
-void read_line(char *);
-int checkDelet(int);
-void STAT(char *res);
-void LIST(int n, char *res);
-void RETR (char * n, char *res);
-void DELE (int n, char * res);
-void RSET (char * res);
-
-
 char username[10];
 char path[50];
 DIR * dirp;
