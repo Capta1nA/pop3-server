@@ -9,6 +9,7 @@
 #include "threadpool.h"
 #include "workqueue.h"
 #include "config.h"
+#include<signal.h>
 
 #define SERVER_PORT 9000
 #define BACKLOG 1
@@ -17,8 +18,10 @@
 
 //pthread_mutex_t smutex = PTHREAD_MUTEX_INITIALIZER;
 
+
 int main(){
 
+    
 
     struct sockaddr_in address;
     int serverFd;
@@ -26,8 +29,10 @@ int main(){
     int opt = 1;
     int addr_size = sizeof(address);
 
+    Config *conf = readConfig("pop3.conf");
+
     //Initialize the threadpool
-    Threadpool *tpool = create_threadpool(THREADPOOL_SIZE, 50);
+    create_threadpool(conf->nthreads);
 
     if((serverFd = socket(AF_INET, SOCK_STREAM,0)) == 0){
         perror("socket");
@@ -40,14 +45,14 @@ int main(){
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(SERVER_PORT);
+    address.sin_port = htons(conf->port);
        
     // Forcefully attaching socket to the port 8080
     if (bind(serverFd,(struct sockaddr *)&address, sizeof(address))<0){
         perror("bind");
         exit(EXIT_FAILURE);
     }
-    if(listen(serverFd, BACKLOG) < 0){
+    if(listen(serverFd, conf->serverBacklog) < 0){
         perror("listen");
         exit(EXIT_FAILURE);
     }
@@ -59,6 +64,12 @@ int main(){
             exit(EXIT_FAILURE);
         }
 
+        printf("%d\n",activeThreads);
+
+        if(activeThreads == conf->nthreads){
+            exit(EXIT_FAILURE);
+        }
+
         int *pclient = malloc(sizeof(int));
         *pclient = csocket;
         pthread_mutex_lock(&mutex);
@@ -66,9 +77,6 @@ int main(){
         pthread_cond_signal(&cond_var);
         pthread_mutex_unlock(&mutex);
 
-
-        //Check the command the client sent
-        //handleConnection(csocket);
     }
 
 

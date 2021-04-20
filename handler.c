@@ -1,6 +1,7 @@
 #include "handler.h"
 #include "user.h"
 #include "MailBox.h"
+#include "threadpool.h"
 
 #define BUFSIZE 2048
 #define MAX_BUF_SIZE 64 * 1024
@@ -163,6 +164,8 @@ void *handleConnection(void *client_socket){
         memset(ltemp,'\0',sizeof(ltemp));
 
     }
+
+    activeThreads--;
     return NULL;
 
 }

@@ -6,9 +6,12 @@
 pthread_cond_t cond_var = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+int activeThreads = 0;
 
 
 void *thread_func(void *args){
+
+    
 
     while(1){
         int *pclient;
@@ -17,17 +20,20 @@ void *thread_func(void *args){
             pthread_cond_wait(&cond_var, &mutex);
 
             pclient = dequeue();
+            activeThreads++;
+            
         }
         pthread_mutex_unlock(&mutex);
 
         if(pclient != NULL){
             handleConnection(pclient);
+
         }
     }
 
 }
 
-Threadpool *create_threadpool(int nthreads, int qsize){
+Threadpool *create_threadpool(int nthreads){
     Threadpool *tpool = NULL;
     int i,res;
 

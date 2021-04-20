@@ -11,7 +11,6 @@
 #include "MailBox.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#define DEBUG 0
 
 void read_line(char* line) //read line
 {
@@ -37,7 +36,6 @@ void mess_count(int * results) {
 	char folder[50];
 	int size = 0;
 	int file_count = 0;
-	int j = 0;
 
 	while ((entry = readdir(dirp)) != NULL) {
 		
@@ -182,7 +180,6 @@ void LIST(int n, char *res) {
 	int results[2];
 	strcpy(res, "S: +OK " );
 	
-	int file_count = 0;
 	
 	dirp = opendir(path); /* There should be error handling after this */
 

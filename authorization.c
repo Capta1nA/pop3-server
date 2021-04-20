@@ -32,7 +32,7 @@ void splitCommand (char * buf,int character,char new[][character]){
 
 }
 
-char *USER (char * answer,char *username) {
+void USER (char * answer,char *username) {
 	contact= malloc (100*sizeof(contact));
 	strcpy(contact[cnt].username,username);
 	strcpy(contact[cnt].path,"mails/");
@@ -54,7 +54,7 @@ char *USER (char * answer,char *username) {
 	}
 }
 
-char *PASS (char * password,char * answer,char *username) {
+void PASS (char * password,char * answer,char *username) {
    contact= malloc (100*sizeof(contact));
    strcpy(contact[cnt].username,username);
   int flag=0;
@@ -99,10 +99,11 @@ void QUIT (){
 	int size=0;
 	char str[100];
 	dptr=opendir(str1);
-	int i ;char prefix[100] = "";
+	//int i ;
+	char prefix[100] = "";
 	char newPath[40];
         int count=0; int fd1;
-	while(sdir=readdir(dptr))
+	while((sdir=readdir(dptr)))
 {
    if(sdir->d_type==4)
     {
@@ -137,7 +138,7 @@ void QUIT (){
 	
 	
 }
-/*
+#ifdef DEBUG
 int main (int argc , char *argv){
 		int continuee=0; //simenei pws den exei valei akoma tin entoli USER
 		char buf[100];
@@ -201,5 +202,4 @@ int main (int argc , char *argv){
 return 0 ;
 
 }
-	
-*/
+#endif
