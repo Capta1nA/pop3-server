@@ -8,10 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "user.h"
-void splitCommand (char * buf,int character,char new[][character]);
-char *USER (char *answer,char * username) ;
-char *PASS (char * password,char * answer,char *username) ;
-void QUIT ();
+
 USERS * contact;
 char userr[50];
 int cnt=0;
