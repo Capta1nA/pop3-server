@@ -4,3 +4,6 @@ typedef struct user {
     char username[50];
 	
 }__attribute__((packed)) USERS;
+
+char *USER (char * answer,char *username);
+char *PASS (char * password,char * answer,char *username);

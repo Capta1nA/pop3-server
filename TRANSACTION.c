@@ -11,18 +11,11 @@
 #include "MailBox.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-
-char username[10];
-char path[50];
-DIR * dirp;
-FILE * fp;
-static int flg = 0;
-int temp = 0;
-MAILBOX * mails;
+#define DEBUG 0
 
 void read_line(char* line) //read line
 {
-	char buf[BUFSIZE];
+	char buf[MBUFSIZE];
 	int c;
 	
 	if ((c = read(STDIN_FILENO, buf, sizeof(buf))) == -1) //read from terminal and save in a buffer
@@ -118,6 +111,8 @@ int checkDelet(int n) {
 }
 
 void initialize() {
+
+	
 
 	int results[2];
 	
@@ -376,8 +371,10 @@ void RSET (char * res) {
 
 }
 
+#ifdef DEBUG
 int main(int argc, char *argv[]) {
 
+	char username[512];
 	strcpy(username, argv[1]);
 	strcpy(path,"as4-supplementary/");
 	strcat(path, username);
@@ -456,3 +453,4 @@ int main(int argc, char *argv[]) {
 	}
 
 }
+#endif

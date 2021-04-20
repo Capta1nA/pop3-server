@@ -1,5 +1,33 @@
-#define BUFSIZE 1024
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <signal.h>
+#include <assert.h>
+#include <ftw.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define MBUFSIZE 1024
 #define MAXCHAR 500
+
+
+typedef struct mailbox {
+
+	int name;
+	int deleted;
+	
+}__attribute__((packed)) MAILBOX;
+
+char path[50];
+DIR * dirp;
+FILE * fp;
+static int flg = 0;
+static int temp = 0;
+MAILBOX * mails;
 
 /**
  * @function read_line
@@ -83,11 +111,6 @@ void DELE (int n, char * res);
  */
 void RSET (char * res);
 
-typedef struct mailbox {
 
-	int name;
-	int deleted;
-	
-}__attribute__((packed)) MAILBOX;
 
 // MAILBOX * mails;

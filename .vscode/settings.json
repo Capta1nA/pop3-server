@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "threadpool.h": "c"
+        "threadpool.h": "c",
+        "ostream": "c"
     }
 }

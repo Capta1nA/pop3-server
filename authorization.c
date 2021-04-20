@@ -35,27 +35,30 @@ void splitCommand (char * buf,int character,char new[][character]){
 char *USER (char * answer,char *username) {
 	contact= malloc (100*sizeof(contact));
 	strcpy(contact[cnt].username,username);
-	strcpy(contact[cnt].path,"/home/pi/epl421_ex4/");
+	strcpy(contact[cnt].path,"mails/");
 	strcat(contact[cnt].path,contact[cnt].username);
 	DIR * dir =opendir(contact[cnt].path);
 	if(dir){
 		closedir(dir); //to directory yparxei 
-		strcat(answer,"+OK ");strcat(answer,contact[cnt].username);strcat(answer," is a valid mailbox");
+		strcat(answer,"+OK ");strcat(answer,contact[cnt].username);strcat(answer," is a valid mailbox\n");
 	}
 	else if (ENOENT == errno ){ //to directory den iparxei 
 		strcat(answer,"-ERR never heard of mailbox ");
 		strcat(answer,contact[cnt].username);
+		strcat(answer,"\n");
 	 }
 	else { // i opendir() exei apotixei gia kapoio logo
 		strcat(answer,"-ERR never heard of mailbox ");
-		strcat(answer,contact[cnt].username);	}
+		strcat(answer,contact[cnt].username);
+		strcat(answer,"\n");
+	}
 }
 
 char *PASS (char * password,char * answer,char *username) {
    contact= malloc (100*sizeof(contact));
    strcpy(contact[cnt].username,username);
   int flag=0;
-  FILE *fp = fopen("/home/pi/epl421_ex4/password", "r");
+  FILE *fp = fopen("mails/password", "r");
       if(fp == NULL) {
           perror("Unable to open file!");
           exit(1);
@@ -66,14 +69,15 @@ char *PASS (char * password,char * answer,char *username) {
      while(getline(&line, &len, fp) != -1) {
 		 strcpy(str, line); //get the first token 
 		 strtok(str, " "); 
-		  char * ptr = strtok(line, " ");     //SECOND TOKEN
-		 if (strcmp(str,contact[cnt].username) == 0 ){
-				strcat(answer,"+OK maildrop locked and ready"); flag=1;
+		  char * ptr = strtok(NULL, " \n");     //SECOND TOKEN
+		  
+		 if (strcmp(str,contact[cnt].username) == 0 && strcmp(ptr,password) == 0){
+				strcat(answer,"+OK maildrop locked and ready\n"); flag=1;
 				break;
             }
 		}
        if (flag==0){
-		   	strcat(answer,("-ERR invalid password"));
+		   	strcat(answer,("-ERR invalid password\n"));
 
 	   }
  
@@ -133,6 +137,7 @@ void QUIT (){
 	
 	
 }
+/*
 int main (int argc , char *argv){
 		int continuee=0; //simenei pws den exei valei akoma tin entoli USER
 		char buf[100];
@@ -155,6 +160,7 @@ int main (int argc , char *argv){
 		 if (strcmp(new[0],"USER") ==0){
 		 USER (answer,new[1]);
 		 printf("%s \n",answer);
+
 		 strcat(correct,"+OK ");strcat(correct,new[1]);strcat(correct," is a valid mailbox");
 		if (strcmp(answer,correct)==0){
 		 continuee=1; //mporei na proxorisei sto password
@@ -196,3 +202,4 @@ return 0 ;
 
 }
 	
+*/
