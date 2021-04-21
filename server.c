@@ -64,8 +64,6 @@ int main(){
             exit(EXIT_FAILURE);
         }
 
-        printf("%d\n",activeThreads);
-
         if(activeThreads == conf->nthreads){
             exit(EXIT_FAILURE);
         }

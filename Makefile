@@ -15,8 +15,8 @@ default: all
 
 all: $(TARGET)
 
-$(TARGET): server.c threadpool.c workqueue.c handler.c authorization.c TRANSACTION.c config.c
-	$(CC) server.c threadpool.c workqueue.c handler.c authorization.c TRANSACTION.c config.c $(CFLAGS) -o $(TARGET) 
+$(TARGET): server.c threadpool.c workqueue.c handler.c authorization.c transaction.c config.c
+	$(CC) server.c threadpool.c workqueue.c handler.c authorization.c transaction.c config.c $(CFLAGS) -o $(TARGET) 
 
 clean:
 	-rm -f $(TARGET) 

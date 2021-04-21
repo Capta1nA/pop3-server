@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "user.h"
+#include "authorization.h"
 
 USERS * contact;
 char userr[50];

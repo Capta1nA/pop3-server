@@ -8,7 +8,7 @@
 #include <signal.h>
 #include <assert.h>
 #include <ftw.h>
-#include "MailBox.h"
+#include "transaction.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -154,7 +154,7 @@ void STAT(char * res) {
 	char tot[10];
 	int results[2];
 	
-	strcpy(res, "S: +OK " );
+	strcpy(res, "+OK " );
 	
 	count_size(results);
 
@@ -178,7 +178,7 @@ void LIST(int n, char *res) {
 	char fc[10];
 	char tot[10];
 	int results[2];
-	strcpy(res, "S: +OK " );
+	strcpy(res, "+OK " );
 	
 	
 	dirp = opendir(path); /* There should be error handling after this */
@@ -231,7 +231,7 @@ void LIST(int n, char *res) {
     					//printf("%d\n", fp_size);
     					sprintf(fc, "%ld", fp_size);
 
-        				strcat(res, "S: ");
+        				strcat(res, " ");
         				strcat(res, entry[i] -> d_name);
         				strcat(res, " ");
         				strcat(res, fc);
@@ -289,7 +289,7 @@ void LIST(int n, char *res) {
 
 void RETR (char *n, char *res) {
 
-	strcpy(res, "S: +OK " );
+	strcpy(res, "+OK " );
 	strcat(path, "/");
 	strcat(path, n);
 	char line[MAXCHAR];
@@ -308,7 +308,7 @@ void RETR (char *n, char *res) {
 
 		strcat(res, c);
 		strcat(res, " octets\n");
-		strcat(res, "S: ");
+		strcat(res, " ");
 		
 		int flag = 0;
 		while ((fgets(line, MAXCHAR, fp)) != NULL){
@@ -321,9 +321,50 @@ void RETR (char *n, char *res) {
 		}
 
 
-		strcat(res, "\nS:.\n");
+		strcat(res, "\n.\n");
 		fclose(fp);
 	}
+
+}
+
+void UQUIT(char *res){
+	int i;
+	int isDel;
+	int all = 0;
+	int deleted = 0;
+
+	char tmp[50];
+
+	for(i=0;i<temp;i++){
+		if(mails[i].deleted == 1){
+			chdir(path);
+			printf("%s\n",path);
+			sprintf(tmp,"%d",mails[i].name);
+			isDel = remove(tmp);
+
+			if(isDel){
+				strcpy(res,"-ERR some deleted messages not removed\n");
+				return;
+			}
+			else{
+				deleted++;
+			}
+		}
+		all++;
+	}
+
+	if(all == deleted){
+		strcpy(res,"+ OK user POP3 server signing off (mailbox empty)");
+		return;
+	}
+	else{
+		
+		sprintf(res, "+ OK user POP3 server signing off (%d left in mailbox)", all-deleted);
+		puts(res);
+		return;
+	}
+
+	
 
 }
 
@@ -354,7 +395,7 @@ void RSET (char * res) {
 	char tot[10];
 	int results[2];
 	
-	strcpy(res, "S: +OK maildrop has " ); //node
+	strcpy(res, "+OK maildrop has " ); //node
 	
 	count_size(results);
 
@@ -379,7 +420,7 @@ int main(int argc, char *argv[]) {
 	char line[15];
 	char *res;
 	res = (char *)malloc (65536 * sizeof(char));
-	strcpy(res, "S: +OK ");
+	strcpy(res, "+OK ");
 
 	flg = 0;
 	initialize();
@@ -433,7 +474,7 @@ int main(int argc, char *argv[]) {
 			else if (strcmp(newString, "NOOP") == 0){
 				newString = strtok(NULL, " \n");
 				if (newString == NULL)
-					strcpy(res, "S: +OK\n");
+					strcpy(res, " +OK\n");
 			}
 
 			else if (strcmp(newString, "RSET") == 0) {

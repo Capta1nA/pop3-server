@@ -1,6 +1,6 @@
 #include "handler.h"
-#include "user.h"
-#include "MailBox.h"
+#include "authorization.h"
+#include "transaction.h"
 #include "threadpool.h"
 
 #define BUFSIZE 2048
@@ -51,7 +51,9 @@ void *handleConnection(void *client_socket){
             if(strcmp(state,"AUTHORIZATION") == 0){
                 strcpy(writeBuffer, "+OK user POP3 server signing off\n");
                 write(csocket, writeBuffer,strlen(writeBuffer));
-                break;
+                close(csocket);
+                exit(EXIT_SUCCESS);
+                
             }
 
         }
@@ -149,11 +151,16 @@ void *handleConnection(void *client_socket){
         }
         else if(memcmp(readBuffer,"QUIT",4) == 0){
             if(strcmp(state,"TRANSACTION") == 0){
-                // strcpy(writeBuffer, "+OK user POP3 server signing off\n");
-                // write(csocket, writeBuffer,strlen(writeBuffer));
-                // break;
+                strcpy(path,"mails/");
+                strcat(path,username);
+                UQUIT(writeBuffer);
+                write(csocket, writeBuffer,strlen(writeBuffer));
+
                 strcpy(state,"UPDATE");
             }
+
+            close(csocket);
+            exit(EXIT_SUCCESS);
 
         }
 
@@ -164,6 +171,7 @@ void *handleConnection(void *client_socket){
         memset(ltemp,'\0',sizeof(ltemp));
 
     }
+
 
     activeThreads--;
     return NULL;

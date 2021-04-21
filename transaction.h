@@ -1,3 +1,5 @@
+#ifndef TRANSACTION_H_
+#define TRANSACTION_H_
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -113,4 +115,6 @@ void RSET (char * res);
 
 
 
-// MAILBOX * mails;
+void UQUIT(char *res);
+
+#endif
